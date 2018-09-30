@@ -1,0 +1,281 @@
+\newcommand{\Subject}{\LARGE \bf Navigation without localisation:\\--\\ reliable teach and repeat based on the convergence theorem}
+\newcommand{\Meeting}{IROS'18 Presentation on exposure and detector setting experiments' outcomes}
+\newcommand{\Authors}{Tom{\' a}{\v s} Krajn{\'i}k, Filip Majer, Lucie Halodov{\' a}, Tom{\' a}{\v s} Vintr}
+\newcommand{\Author}{Tom Krajnik}
+\newcommand{\Date}{October 2018}
+%\usetheme{warsaw}
+
+\newcommand{\video}[2]{\href{run:#1}{\includegraphics[width=0.99\textwidth]{#2}}}
+%\newcommand{\link}[2]{\href{run:#1}{\includegraphics[width=0.99\textwidth]{#2}}}
+\newcommand{\bib}[3]{\begin{thebibliography}{#1}\bibitem[#1]{#1}{#2}.\newblock{\em #3}\end{thebibliography}}
+
+\newcommand{\Lincoln}{Artificial Intelligence Centre, Czech Technical University, Czechia}
+\newcommand{\Institute}{\Lincoln\\}
+
+\newcommand{\HeadLineLeft}{Krajn{\' i}k et al.}
+\newcommand{\HeadLineCenter}{Navigation without localisation: reliable teach and repeat based on the convergence theorem}
+\newcommand{\HeadLineRight}{Madrid, IROS 2018}
+\newcommand{\FootLineCenter}{Navigation without localisation: reliable teach and repeat based on the convergence theorem}
+\newcommand{\FootLineLeft}{\insertshortauthor}
+
+\input{inc/head}
+
+
+\title{{\bf \Subject}}
+\usepackage{multirow}
+\begin{document}
+% - frame ---------------------------------------------------------------------
+
+\frame{\titlepage}
+
+% - frame --------------------------------------------------------------------
+\begin{frame}
+   \frametitle{Map-based Visual Navigation}
+	\begin{columns}
+	\hfill
+	\column{0.45\textwidth}
+	Visual navigation:
+   \begin{enumerate}
+	   \item  Extract image features,
+	   \item  find correspondences,
+	   \item  determine robot pose,
+	   \item  calculate movement.
+   \end{enumerate}
+	\column{0.45\textwidth}
+\only<2,3,4>{
+	Problems:
+   \begin{enumerate}
+	   \item  Feature deficiency,
+	   \item  environment change,
+	   \item  precision, complexity,
+	   \item  real-time issues.
+   \end{enumerate}
+}
+   \end{columns}
+	 \vfill
+	 \only<1,2,3>{\invisible<1,2>{\hfill\includegraphics[width=0.45\textwidth]{fig/hostibejk_day}\hfill\includegraphics[width=0.45\textwidth]{fig/hostibejk_night}\hfill}}
+      \vfill
+\only<4>{
+	To overcome the aforementioned problems, you a \textbf{realistic} model of position uncertainty. Investigating how the uncertainties robot position ($x,y$) and heading ($\varphi$) affect each other, several authors have concluded that error of the robot heading ($\varphi$) estimation has a significantly more prominent impact thab $(x,y)$ error.
+      \vfill
+}
+\end{frame}
+
+\section{Method principle}
+% - frame ---------------------------------------------------------------------
+\begin{frame}
+   \frametitle{For navigation, heading estimation is crucial}
+
+   During autonomous navigation
+   \begin{itemize}
+	\item the inaccurracy of $\varphi$ causes $x,y$ estimation errors, 
+	\item but $x,y$ errors influence $\varphi$ estimation only marginally.
+   \end{itemize}
+   \vspace{5mm}
+   Heading-only estimation
+    \begin{itemize}
+	\item is simpler and faster to calculate,
+	\item requires only a low number of feature correspondences,
+ 	\item and is more robust than full ($x,y,\varphi)$ estimation.
+   \end{itemize}
+   \vspace{5mm}
+  We show that in teach-and-repeat visual navigation,
+    \begin{itemize}
+	\item one can use the camera for \textbf{heading estimation only}, 
+	\item and leave $x,y$ estimates to odometry. 
+   \end{itemize}
+\end{frame}
+
+% - frame ---------------------------------------------------------------------
+\begin{frame}
+\frametitle{Position error evolution}
+      \only<1>{\video{cmds/segment.sh}{fig/segment_one_start.jpg}}
+      \only<2>{\video{cmds/segment.sh}{fig/segment_one_end.jpg}}
+\end{frame}
+
+% - frame ---------------------------------------------------------------------
+\begin{frame}
+\frametitle{Position error evolution}
+   \begin{columns}
+      \column{0.6\textwidth}
+      \only<1>{\includegraphics[width=1.2\columnwidth]{fig/converge0}}\\
+      \only<2>{\includegraphics[width=1.2\columnwidth]{fig/converge1}}\\
+      \only<3>{\includegraphics[width=1.2\columnwidth]{fig/converge2}}\\
+      \only<4>{\includegraphics[width=1.2\columnwidth]{fig/converge3}}\\
+      \only<5>{\includegraphics[width=1.2\columnwidth]{fig/converge4}}\\
+      \column{0.4\textwidth}%
+      Robot position coordinates 
+      \begin{equation*}
+	      \begin{array}{l}
+		      b_x = a_x+s(1+\upsilon),\\
+		      b_y = ma_y+\xi.
+	      \end{array}
+      \end{equation*} 
+      $m$ - heading correction\\
+      $\xi,\upsilon$ - errors (odo+cam)\\
+      \vspace{3mm}
+      \invisible<1>{
+      Position error ellipse axes\\
+	$f_{i+1}=g_{i}+\upsilon$, $g_{i+1}=mf_{i}+\xi$\\
+      }
+      \vspace{3mm}
+      \invisible<1-3>{
+      Convergence\\
+	$f_{\infty} = (\xi+\upsilon)/(1-m)$\\ 	
+	$f_{\infty}$, $g_{\infty}$ finite if $\|m\| < 1$.
+      }
+\end{columns}
+\end{frame}
+
+% - frame ---------------------------------------------------------------------
+\begin{frame}
+\frametitle{Position error evolution}
+      \video{cmds/converge.sh}{fig/loop.jpg}
+\end{frame}
+
+\begin{frame}
+\frametitle{Navigation at night}
+      \video{cmds/night.sh}{fig/loop.jpg}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Experimental evaluation}
+	\begin{center}
+		Night  experiment.
+	\end{center}
+\end{frame}
+
+% - frame ---------------------------------------------------------------------
+\begin{frame}
+	\frametitle{Questions}
+	\begin{center}
+\vfill
+\vfill
+	Source code available at \\
+\vfill
+		https://bearnav.eu\\
+\vfill
+		Questions? 
+\vfill
+\vfill
+\vfill
+\vfill
+\vfill
+	\end{center}
+\end{frame}
+
+
+
+
+
+
+
+\tiny{[1] Krajnik et al.: Simple Yet Stable Bearing Only Navigation, Journal of Field Robotics, 2010}
+
+\section{What about odometry drift}
+% - frame ---------------------------------------------------------------------
+\begin{frame}
+   \frametitle{For navigation, heading estimation is crucial}
+
+   During vision-in-the-loop navigation
+   \begin{itemize}
+	\item the inaccurracy of $\varphi$ causes $x,y$ estimation errors, 
+	\item but $x,y$ errors influence $\varphi$ estimation only marginally.
+   \end{itemize}
+   \vspace{5mm}
+   During vision-in-the-loop navigation
+
+
+   Thus, to achieve reliable navigation, one can use exteroceptive sensing to estimate $\varphi$ and leave $x,y$ estimates on odometry. 
+   In other words, full 3D \textbf{localisation is not needed} and the heading correctionscan suppress odometric drift and ensure that the $x,y$ error does not diverge [1].\\ 
+   Therefore we propose
+   \begin{itemize}
+ 	\item to use the vision to estimate only the robot heading,
+ 	\item and leave $x,y$ position estimation just on the odometry.
+   \end{itemize}
+   \vspace{5mm}
+   We have created a navigation system, that works in two phases
+   \begin{description}
+	\item[mapping] - a  map is created during a teleoperated run,
+ 	\item[navigation]  - the robot uses the map to navigate.
+   \end{description}
+   \tiny{[1] Krajnik et al.: Simple Yet Stable Bearing Only Navigation, Journal of Field Robotics, 2010}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Teach and repeat navigation}
+   \vfill
+   \begin{columns}
+      \column{1.0\textwidth}
+   \begin{itemize}
+	\item manually guide the robot along a given path,
+	\item robot remembers its velocity along the path,
+	\item robot remembers image efatures that it saw,
+	\item robot replays its velocities,
+	\item while correcting its heading according to its visual memory.
+   \end{itemize}
+   \end{columns}
+   \begin{center}
+	 \includegraphics[width=0.85\textwidth]{fig/testpaths}
+	 \vspace{-3mm}
+   \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Teach and repeat navigation}
+   \begin{overlayarea}{\textwidth}{\textheight}
+	 \only<1>{\includegraphics[width=1.0\textwidth]{fig/s0}}
+	 \only<2>{\includegraphics[width=1.0\textwidth]{fig/s1}}
+	 \only<3>{\includegraphics[width=1.0\textwidth]{fig/s2}}
+	 \only<4>{\includegraphics[width=1.0\textwidth]{fig/s3}}
+	 \only<5>{\includegraphics[width=1.0\textwidth]{fig/s4}}
+	 \only<6>{\includegraphics[width=1.0\textwidth]{fig/s5}}
+	 \only<7>{\includegraphics[width=1.0\textwidth]{fig/s6}}
+	 \only<8>{\includegraphics[width=1.0\textwidth]{fig/s7}}
+	 \only<9>{\includegraphics[width=1.0\textwidth]{fig/s8}}
+	 \only<10>{\includegraphics[width=1.0\textwidth]{fig/s9}}
+	 \only<11>{\includegraphics[width=1.0\textwidth]{fig/s10}}
+   \end{overlayarea}
+\end{frame}
+
+\begin{frame}
+\frametitle{Teach and repeat navigation}
+	\begin{columns}
+		\column{0.48\textwidth}%
+		\begin{normalsize}
+			Mapping phase
+		\end{normalsize}
+		\begin{itemize}
+			\item Move forwards, remember velocities,
+			\item extract and track image features,
+			\item store features every 0.2~m along with robot odometry.
+		\end{itemize}
+		%\includegraphics[width=0.5\textwidth]{fig/method_learn.png}\\
+		\column{0.52\textwidth}%
+		\begin{normalsize}
+			Autonomous navigation	
+		\end{normalsize}
+		\begin{itemize}
+			\item Replay the mapped velocities,
+			\item extract image features, 
+			\item match them to the mapped ones,
+			\item determine horizontal displacement,
+			\item use to steer the robot.
+		\end{itemize}
+		%\includegraphics[width=0.5\textwidth]{fig/method_traverse.png}\\
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Teach and repeat navigation}
+	Video navigation 1  
+\end{frame}
+
+\begin{frame}
+\frametitle{Teach and repeat navigation}
+	Video segment 2  
+\end{frame}
+
+
+\end{document}
